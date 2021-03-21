@@ -28,12 +28,16 @@ async function tweet() {
 }
 
 let nextTweet = new Date();
-nextTweet.setTime(nextTweet.getTime() + 3600 * 1000);
-nextTweet.setMinutes(0, 0, 0);
+if (nextTweet.getMinutes() >= 30) {
+  nextTweet.setTime(nextTweet.getTime() + 1800 * 1000)
+  nextTweet.setMinutes(0, 0, 0);
+} else {
+  nextTweet.setMinutes(30, 0, 0);
+}
 
 console.log(`Launched. Next tweet at: ${nextTweet}`);
 
 setTimeout(async function () {
   await tweet();
-  setInterval(tweet, 3600 * 1000);
+  setInterval(tweet, 1800 * 1000);
 }, nextTweet.getTime() - Date.now());
