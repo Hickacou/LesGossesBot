@@ -5,7 +5,7 @@ const JSDOM = require('jsdom').JSDOM;
 
 const BASE_URL = 'https://cooljugator.com/fr/';
 async function get(verb) {
-	const url = BASE_URL + verb;
+	const url = encodeURI(BASE_URL + verb);
 	const res = await axios.get(url);
 	const { window } = new JSDOM(res.data);
 	const $ = require('jquery')(window);
