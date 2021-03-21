@@ -17,7 +17,7 @@ async function tweet() {
       console.log(`${verb} couldn't be conjugated.`);
   }
   conjugated = conjugated.replace('’', '\'');
-  const phrase = `Chérie ${conjugated} les gosses`;
+  const phrase = `Chérie, ${conjugated} les gosses`;
   fs.writeFileSync('./save.json', `{"line":${line}}`, { encoding: 'utf-8' });
   return new Promise(function (resolve, reject) {
     T.post('statuses/update', { status: phrase }, function (err, tw, res) {
