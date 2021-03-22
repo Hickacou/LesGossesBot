@@ -2,6 +2,7 @@ const twit = require('twit');
 const fs = require('fs');
 const config = require('./config.json');
 const conjugate = require('./conjugator').get;
+const { default: axios } = require('axios');
 
 const T = new twit(config);
 const list = fs.readFileSync('./list.txt', { encoding: 'utf-8' }).split('\n');
@@ -20,8 +21,17 @@ async function tweet() {
   const phrase = `Chérie, ${conjugated} les gosses`;
   fs.writeFileSync('./save.json', `{"line":${line}}`, { encoding: 'utf-8' });
   return new Promise(function (resolve, reject) {
-    T.post('statuses/update', { status: phrase }, function (err, tw, res) {
+    T.post('statuses/update', { status: phrase }, async function (_err, tw, _res) {
       console.log(`Sent tweet with verb '${verb}'`);
+      try {
+        const link = `https://fr.wiktionary.org/wiki/${verb}`;
+        await axios.get(encodeURI(link));
+        T.post('statuses/update', { status: link, in_reply_to_status_id: tw.id_str }, function (_err, tw, _res) {
+          console.log('Replied with Wiktionary link');
+        });
+      } catch (err) {
+        console.log('Couldn\'t find Wiktionary link for this verb');
+      }
       resolve();
     });
   });
